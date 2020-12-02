@@ -1,5 +1,6 @@
 var x11 = require("rendering");
 var soc = require("society");
+var war = require("war");
 soc.init();
 let run = 0;
 module.exports.loop = function(){
@@ -13,5 +14,6 @@ module.exports.loop = function(){
 	}
 	soc.work();
 	soc.reproduce();
+	war.onTick();
 	x11.renderHubs();
 }
