@@ -1,4 +1,4 @@
-modules.exports = {
+module.exports = {
     onTick: ()=> {
         for(let room in Game.rooms){
             let towers = Game.rooms[room].find(FIND_MY_STRUCTURES,{filter:(s)=>s.structureType === STRUCTURE_TOWER});
