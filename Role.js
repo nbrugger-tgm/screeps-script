@@ -27,7 +27,7 @@ module.exports = function(behaviour,prefix,bodyTable,followers,minEnergy) {
 	this.hivemind = null;
 	this.init = ()=>{};
 	this.live = function(me){
-		if	(me.ticksToLive < 50 && me.memory.age >= 10){
+		if	(me.ticksToLive < 50 && (me.memory.age <= 5 || me.memory.age == undefined)){
 			let spawn =  me.room.find(FIND_MY_SPAWNS)[0];
 			let err = spawn.renewCreep(me);
 			if(err === ERR_NOT_IN_RANGE) {

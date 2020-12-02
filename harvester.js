@@ -50,7 +50,6 @@ module.exports = () => {
 		delete me.memory.ignore;
 		me.memory.idle = targets.length === 0;
 		if(me.memory.idle){
-			console.log("Cant find source "+JSON.stringify(hivemind));
 			return;
 		}
 		targets = _.sortBy(targets, s => me.pos.getRangeTo(s));
