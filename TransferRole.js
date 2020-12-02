@@ -52,15 +52,16 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 		delete me.memory[this.prefix].ignore;
 		if(targets.length === 0){
 			console.log("["+me.name+"] No "+subject+" found");
-			me.memory.idle = true;
+			me.memory[prefix].idle = true;
 			return;
 		}else{
-			me.memory.idle = false;
+			me.memory[prefix].idle = false;
 		}
 		targets = _.sortBy(targets, (s)=>prio.sorter(s,me));
 		me.memory[this.prefix].target = targets[0].id;
 		this.lockSource(me,prio.name);
 		me.memory[this.prefix].state = foundState;
+		this.behave(me);
 	}
 	role.findTarget = function(me) {
 		this.finding(me, "sink", sinkPriority, SEARCHING_SINK, GOING_TO_SINK);
@@ -79,6 +80,7 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 	role.behave = function(me) {
 		if(me.memory[this.prefix] === undefined)
 			me.memory[this.prefix] = {};
+		//TODO optimite
 		me.memory.storeless = me.room.find(FIND_STRUCTURES,{filter: (build)=>build.structureType === STRUCTURE_CONTAINER}).length === 0;
 		if(me.memory[this.prefix].state === undefined) me.memory[this.prefix].state = SEARCHING_SOURCE;
 		let state = me.memory[this.prefix].state;
@@ -91,7 +93,30 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 				else
 					this.findTarget(me);
 			} else {
-				err = me.moveTo(source.pos.x, source.pos.y, {visualizePathStyle: {stroke: '#33a296'}});
+				if (state === GOING_TO_SOURCE) {
+					if (stopCollectingCondition(me, source)) {
+						this.findTarget(me);
+						return me.memory[prefix].idle;
+					} else if (switchSourceCondition(me, source)) {
+						this.findSource(me);
+						return me.memory[prefix].idle;
+					}
+				} else {
+					if (stopSinkingCondition(me, source)) {
+						this.findSource(me);
+						return me.memory[prefix].idle;
+					} else if (switchSinkCondition(me, source)) {
+						this.findTarget(me);
+						return me.memory[prefix].idle;
+					}
+				}
+				err = me.moveTo(source.pos.x, source.pos.y, {visualizePathStyle: {
+						fill: 'transparent',
+						stroke: '#7eae2d',
+						lineStyle: 'dashed',
+						strokeWidth: .075,
+						opacity: .75
+					}});
 				if (err !== OK && err !== ERR_TIRED) {
 					console.log("[" + me.name + "] Moving to " + (state === GOING_TO_SINK ? "sink" : "source") + " failed : " + err);
 					me.memory[this.prefix].ignore = source.id;
@@ -106,13 +131,15 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 		else if(state === COLLECTING || state === LOADING_OFF){
 			let source = Game.getObjectById(me.memory[this.prefix].target);
 			if(source === null){
+				console.log("[" + me.name + "] Source dissapered");
 				if(state === COLLECTING)
 					this.findSource(me);
 				else
 					this.findTarget(me);
 			} else {
 				let err = state === COLLECTING ? collectorFunction(me, source) : sinkFunction(me, source);
-				if (err !== OK && err !== ERR_FULL) {
+
+				if (err !== OK  && !(err === ERR_FULL && state === COLLECTING)) {
 					console.log("[" + me.name + "] " + (state === LOADING_OFF ? "Sinking" : "Collecting") + " of " + source.pos + " failed : " + err);
 					me.memory[this.prefix].ignore = source.id;
 					if (state === COLLECTING)
@@ -142,7 +169,7 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 		}else if(state === SEARCHING_SOURCE){
 			this.findSource(me);
 		}
-		return !me.memory.idle;
+		return !me.memory[prefix].idle;
 	};
 
 	role.getBody = function(power) {

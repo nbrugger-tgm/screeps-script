@@ -5,8 +5,8 @@ soc.init();
 let run = 0;
 module.exports.loop = function(){
     //for(creep in Game.creeps){
-    //    if(Game.creeps[creep].memory.role == "builder")
-    //        Game.creeps[creep].suicide();
+    //    if(Game.creeps[creep].memory.role == "harvester")
+    //        delete Game.creeps[creep].memory.harvester;
     //}
     //Game.creeps.builder62.moveTo(Game.spawns["Spawn1"]);
     if((run++)%1000 === 0){

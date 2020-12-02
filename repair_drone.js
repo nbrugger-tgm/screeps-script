@@ -13,13 +13,13 @@ const sinkTable = [
         type: FIND_STRUCTURES,
         subType: [STRUCTURE_RAMPART],
         filter: (build, me) => (build.hits / build.hitsMax )< 0.1 && build.progressTotal === undefined,
-        sorter: (build, me) => (Math.floor(build.hits / 10) * 10) + me.pos.getRangeTo(build)
+        sorter: (build, me) => (Math.floor(build.hits / 1000) * 1000) + me.pos.getRangeTo(build)
     },{
         name: "Repairable",
         hivemindLimit: 5,
         type: FIND_STRUCTURES,
         filter: (build, me) => build.hits+100 < build.hitsMax && build.progressTotal === undefined,
-        sorter: (build, me) => (Math.floor(build.hits / 10) * 10) + me.pos.getRangeTo(build)
+        sorter: (build, me) => (Math.floor(build.hits / 1000) * 1000) + me.pos.getRangeTo(build)
     },
 ];
 const sourceTable = [

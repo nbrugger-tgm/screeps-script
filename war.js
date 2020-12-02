@@ -15,10 +15,10 @@ module.exports = {
                     tower.heal(targets[0]);
                     continue;
                 }
-                targets = tower.room.find(FIND_MY_STRUCTURES,{filter:(c)=>c.hits<c.hitsMax});
+                targets = tower.room.find(FIND_STRUCTURES,{filter:(c)=>c.hits<1000});
                 if(targets.length !== 0){
-                    targets = _.sortBy(targets,(s)=>tower.pos.getRangeTo(s));
-                    tower.repair(targets[0]);
+                    targets = _.sortBy(targets,(s)=>tower.pos.getRangeTo(s)+s.hits);
+                    let err = tower.repair(targets[0]);
                 }
             }
         }

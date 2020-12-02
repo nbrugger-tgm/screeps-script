@@ -16,22 +16,24 @@ module.exports = {
 		population: Object.keys(Game.creeps),
 		targetPopulation: {
 			harvester: 6,
-			builder: 3,
-			upgrader: 1,
-			cargo: 0,
-			repair_drone: 2
+			builder: 2,
+			upgrader: 2,
+			//cargo: 0,
+			repair_drone: 1,
+			supplier: 1
 		},
 		roles: {
-			harvester: (require("harvester"))(),
+			harvester: require("cool_harvester"),
 			builder: require("builder"),
 			upgrader: require("upgrader"),
-			cargo: require("cargo")(),
-			repair_drone: require("repair_drone")
+			//cargo: require("cargo")(),
+			repair_drone: require("repair_drone"),
+			supplier: require("supplier")
 		},
 		reha:{
 			builder: false,
 			upgrader: false,
-			cargo: false
+			repair_drone: false
 		},
 		init: function() {
 			for (let key of Object.keys(this.roles)) {
@@ -61,7 +63,7 @@ module.exports = {
 		    for(let role of Object.keys(this.roles))
 		         this.roles[role].onTick();
 			this.population = Object.keys(Game.creeps);
-			for(member in this.population){
+			top_loop: for(member in this.population){
 				member = this.population[member];
 				var screep = Game.creeps[member];
 				if(screep.spawning)
@@ -71,10 +73,9 @@ module.exports = {
 				var roles = this.roles[role].followers;
 				var done = true;
 				do {
-					if(!done){
+					if(!done)
 					    //console.log("Switch from("+screep.memory.role+") to alternative JOB ("+role+")");
-					}
-					if(role == null || role == undefined){
+					if(role === undefined || role===null){
 					    screep.say("IDLE");
 					    break;
 					}
@@ -85,8 +86,12 @@ module.exports = {
 						 console.log("Error on executin "+role+" job ");
 						 throw e;
 						}
-					else
+					else {
 						done = false;
+						screep.say("🍹");
+						screep.moveTo(22,12);
+						continue top_loop;
+					}
 					if(!replacementWork)
 					    break;
 					role = roles[task++];
