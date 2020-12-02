@@ -8,6 +8,14 @@
 */
 const sinkTable = [
     {
+        name: "Base WALL",
+        hivemindLimit: 10,
+        type: FIND_MY_CONSTRUCTION_SITES,
+        subTypes: [STRUCTURE_WALL],
+        filter: (build,me)=>true,
+        sorter: (build,me)=>me.pos.getRangeTo(build)
+    },
+    {
         name: "Containers",
         hivemindLimit: 10,
         type: FIND_MY_CONSTRUCTION_SITES,
