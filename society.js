@@ -42,16 +42,17 @@ module.exports = {
 		spawnCreep: function(spawn,role,energy){
 		    if(Game.spawns[spawn].spawning)
 		    	return;
-		    console.log("Spawn "+role);
-		    var mainRole = this.roles[role];
-		    var name = mainRole.prefix+Math.ceil(Math.random()*99);
-			var personality = mainRole.create();
-			var body = mainRole.getBody(energy);
-			var err = Game.spawns[spawn].spawnCreep(body,name,{memory:personality});
-			if(err != OK){
+		    console.log("Spawn "+role +" on "+spawn);
+		    let mainRole = this.roles[role];
+		    let name = mainRole.prefix+Math.ceil(Math.random()*99);
+			let personality = mainRole.create();
+			let body = mainRole.getBody(energy);
+			let err = Game.spawns[spawn].spawnCreep(body,name,{memory:personality});
+			if(err !== OK){
 				console.log(err);
 				return false;
 			} else {
+				console.log("Spawn successfull");
 				this.population.push(name);
 				return true;
 			}
