@@ -40,11 +40,13 @@ module.exports = TransfereRole(
     200,
     sinkTable,
     sourceTable,
+    3,
+    1,
     (me,source)=>me.withdraw(source,RESOURCE_ENERGY),
     (me,source)=>me.repair(source),
     (me,source)=>me.carry.energy === 0,
     (me,source)=>me.carry.getFreeCapacity(RESOURCE_ENERGY)===0||source.store.energy === 0,
-    (me,source)=> ticks++%20 === 0,
+    (me,source)=> ticks++%3 === 0,
     (me,source)=>source.store.energy===0);
 module.exports.getBody = function(power) {
     var body = [CARRY,MOVE,WORK];

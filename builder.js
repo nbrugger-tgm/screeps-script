@@ -64,6 +64,8 @@ module.exports = TransfereRole(
     200,
     sinkTable,
     sourceTable,
+    3,
+    1,
     (me,source)=>me.withdraw(source,RESOURCE_ENERGY),
     (me,source)=>me.build(source),
     (me,source)=>me.carry.energy === 0,

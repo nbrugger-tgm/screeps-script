@@ -21,7 +21,7 @@ const examplePrio = [
 	}
 ];
 
-module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,collectorFunction,sinkFunction,stopSinkingCondition,stopCollectingCondition,switchSinkCondition = (me,source)=>false,switchSourceCondition = (me,cource)=>false,log_minor = false,init = ()=>{}) => {
+module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDisdance = 1,sourceDisdance = 1,collectorFunction,sinkFunction,stopSinkingCondition,stopCollectingCondition,switchSinkCondition = (me,source)=>false,switchSourceCondition = (me,cource)=>false,log_minor = false,init = ()=>{}) => {
 	let role = new Role(null, prefix, undefined, followers, minEngergy);
 	role.disdanceSorter = (s,me)=>me.pos.getRangeTo(s);
 	role.storeless = true;
@@ -96,11 +96,10 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,collec
 					console.log("[" + me.name + "] Moving to " + (state === GOING_TO_SINK ? "sink" : "source") + " failed : " + err);
 					me.memory[this.prefix].ignore = source.id;
 					this.findSource(me);
-					return false;
 				} else if (err === ERR_TIRED && log_minor) {
 					console.log("[" + me.name + "] Not enought stamina to move!");
 				}
-				if (me.pos.inRangeTo(source.pos, 1))
+				if (source.pos.inRangeTo(me.pos.x,me.pos.y, state === GOING_TO_SOURCE ? sourceDisdance : sinkDisdance))
 					me.memory[this.prefix].state = state === GOING_TO_SOURCE ? COLLECTING : LOADING_OFF;
 			}
 		}
@@ -113,13 +112,15 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,collec
 					this.findTarget(me);
 			} else {
 				let err = state === COLLECTING ? collectorFunction(me, source) : sinkFunction(me, source);
-				if (err !== OK) {
+				if (err !== OK && err !== ERR_FULL) {
 					console.log("[" + me.name + "] " + (state === LOADING_OFF ? "Sinking" : "Collecting") + " of " + source.pos + " failed : " + err);
 					me.memory[this.prefix].ignore = source.id;
 					if (state === COLLECTING)
 						this.findTarget(me);
 					else
 						this.findSource(me);
+				}else if(err === ERR_FULL && state === COLLECTING){
+				    this.findTarget(me);  
 				} else {
 					if (state === COLLECTING) {
 						if (stopCollectingCondition(me, source)) {
