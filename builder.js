@@ -12,7 +12,7 @@ const sinkTable = [
         hivemindLimit: 10,
         type: FIND_MY_CONSTRUCTION_SITES,
         subTypes: [STRUCTURE_CONTAINER],
-        filter: (build)=>me.memory.storeless,
+        filter: (build,me)=>me.memory.storeless,
         sorter: (build,me)=>me.pos.getRangeTo(build)
     },
     {
@@ -32,7 +32,7 @@ const sinkTable = [
 ];
 const sourceTable = [
     {
-        name: "Storage",
+        name: "Spawn",
         hivemindLimit: -1,
         type: FIND_MY_STRUCTURES,
         subTypes: [STRUCTURE_SPAWN],
@@ -52,7 +52,7 @@ const sourceTable = [
 var TransfereRole = require('TransferRole');
 module.exports = TransfereRole(
     "builder",
-    ["repair_drone"],
+    ["repair_drone","harvester"],
     200,
     sinkTable,
     sourceTable,

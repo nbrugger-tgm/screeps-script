@@ -6,7 +6,7 @@
 * var mod = require('society');
 * mod.thing == 'a thing'; // true
 */
-const replacementWork = false;
+const replacementWork = true;
 const preference = "harvester";
 const Hivemind = require('hivemind');
 
@@ -17,7 +17,7 @@ module.exports = {
 		targetPopulation: {
 			harvester: 6,
 			builder: 3,
-			upgrader: 2,
+			upgrader: 1,
 			cargo: 0,
 			repair_drone: 2
 		},
