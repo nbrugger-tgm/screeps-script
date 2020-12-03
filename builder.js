@@ -6,18 +6,19 @@
 * var mod = require('harvester');
 * mod.thing == 'a thing'; // true
 */
+const GROUPS = require("constants").GROUPS;
 const sinkTable = [
     {
         name: "Base WALL",
-        hivemindLimit: 10,
+        hivemindLimit: -1,
         type: FIND_MY_CONSTRUCTION_SITES,
         subTypes: [STRUCTURE_WALL],
         filter: (build,me)=>true,
         sorter: (build,me)=>me.pos.getRangeTo(build)
     },
     {
-        name: "Containers",
-        hivemindLimit: 10,
+        name: "First container",
+        hivemindLimit: -1,
         type: FIND_MY_CONSTRUCTION_SITES,
         subTypes: [STRUCTURE_CONTAINER],
         filter: (build,me)=>me.memory.storeless,
@@ -25,14 +26,14 @@ const sinkTable = [
     },
     {
         name: "Extensions",
-        hivemindLimit: 10,
+        hivemindLimit: -1,
         type: FIND_MY_CONSTRUCTION_SITES,
         filter: (build)=>build.structureType === STRUCTURE_EXTENSION,
         sorter: (build,me)=>me.pos.getRangeTo(build)
     },
     {
         name: "ConstructionSite",
-        hivemindLimit: 10,
+        hivemindLimit: -1,
         type: FIND_MY_CONSTRUCTION_SITES,
         filter: ()=>true,
         sorter: (build,me)=>me.pos.getRangeTo(build)
@@ -41,7 +42,6 @@ const sinkTable = [
 const sourceTable = [
     {
         name: "Spawn",
-        hivemindLimit: -1,
         type: FIND_MY_STRUCTURES,
         subTypes: [STRUCTURE_SPAWN],
         filter: (build,me)=>me.memory.storeless,
@@ -49,7 +49,6 @@ const sourceTable = [
     },
     {
         name: "Storage",
-        hivemindLimit: -1,
         type: FIND_STRUCTURES,
         subTypes: [STRUCTURE_STORAGE,STRUCTURE_CONTAINER,STRUCTURE_POWER_BANK],
         filter: (build,me)=>build.store.energy>me.carryCapacity,

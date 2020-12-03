@@ -6,26 +6,25 @@
 * var mod = require('harvester');
 * mod.thing == 'a thing'; // true
 */
+const GROUPS = require("constants").GROUPS;
 const sinkTable = [
     {
-        name: "Spawn",
-        hivemindLimit: 10,
+        name: GROUPS.SPAWN,
         type: FIND_MY_STRUCTURES,
         subTypes: [STRUCTURE_SPAWN,STRUCTURE_EXTENSION],
         filter: (build,me)=>build.store.getFreeCapacity(RESOURCE_ENERGY)>0,
         sorter: (build,me)=>me.pos.getRangeTo(build)
     },
     {
-        name: "Containers",
-        hivemindLimit: 10,
+        name: GROUPS.STORAGE,
         type: FIND_STRUCTURES,
-        subTypes: [STRUCTURE_CONTAINER],
+        subTypes: [STRUCTURE_CONTAINER,STRUCTURE_STORAGE],
         filter: (build,me)=>build.store.getFreeCapacity(RESOURCE_ENERGY)>0,
         sorter: (build,me)=>me.pos.getRangeTo(build)
     },
     {
-        name: "ConstructionSite",
-        hivemindLimit: 10,
+        name: GROUPS.TOWER,
+        hivemindLimit: 4,
         type: FIND_MY_STRUCTURES,
         subTypes: [STRUCTURE_TOWER],
         filter: (build,me)=>build.store.getFreeCapacity(RESOURCE_ENERGY)>0,
@@ -34,8 +33,8 @@ const sinkTable = [
 ];
 const sourceTable = [
     {
-        name: "Source",
-        hivemindLimit: -1,
+        name: GROUPS.SOURCE,
+        hivemindLimit: 3,
         type: FIND_SOURCES_ACTIVE,
         filter: (build,me)=>true,
         sorter: (build,me)=>me.pos.getRangeTo(build)

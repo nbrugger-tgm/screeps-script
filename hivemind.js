@@ -17,15 +17,31 @@ function Hivemind() {
     this.releaseLock = (group,id)=>{
         if(this.data[group] === undefined) return;
         if(this.data[group][id] === undefined) return;
-        (this.data)[group][id] -= 1;
+        let val = (this.data)[group][id];
+        let old = val;
+        val--;
+        if(val<0)
+            console.log("HIVEMIND INCONSISTENSY!");
+        val = 0;
+        this.data[group][id] = val;
+        if(group === "Source")
+            console.log("Release "+group+"/"+id+" from "+old+" to "+val);
     }
     this.isFree = (group,id)=>{
         if(this.data[group] === undefined) return true;
         if(this.data[group][id] === undefined || this.data[group][id] === null) return true;
         //console.log("IS FREE : "+group+"/"+id+" = "+((this.data)[group][id] < (this.maxVals[group] === undefined ? 8 : this.maxVals[group])));
-        return (this.data)[group][id] < (this.maxVals[group] === undefined ? 8 : this.maxVals[group]);
+        return (this.data)[group][id] < (this.maxVals[group] === undefined ? 5 : this.maxVals[group]);
     }
-    this.CONTAINERS = "containers";
-    this.SOURCES = "sources";
+    this.getGroups = function () {
+        return Object.keys(this.data);
+    }
+    this.getAllIds = ()=>{
+        let ids = [];
+        for(let grp in this.data){
+            ids = ids.concat(Object.keys(this.data[grp]));
+        }
+        return ids;
+    }
 }
 module.exports = Hivemind;

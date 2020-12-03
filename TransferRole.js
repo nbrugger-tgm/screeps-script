@@ -44,6 +44,7 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 					structure.id !== me.memory[this.prefix].ignore &&
 					(cprio.subTypes === undefined || cprio.subTypes.includes(structure.structureType)) &&
 					//TODO: hivemind
+					hivemind.isFree(cprio.name,structure.id) &&
 					cprio.filter(structure,me)
 				)
 			});
@@ -58,6 +59,8 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 			}
 		}
 		delete me.memory[this.prefix].ignore;
+		delete me.memory[this.prefix].target;
+
 		if(targets.length === 0){
 			console.log("["+me.name+"] No "+subject+" found");
 			me.memory[prefix].idle = true;
@@ -193,10 +196,12 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 	role.init = function(){
 		hivemind = this.hivemind;
 		for(let prio of sinkPriority)
-			hivemind.setGroupMax(prio.name,prio.hivemindLimit === -1 ? 50 : prio.hivemindLimit);
+			if(prio.hivemindLimit !== undefined)
+				hivemind.setGroupMax(prio.name,prio.hivemindLimit === -1 ? 50 : prio.hivemindLimit);
 
 		for(let prio of sourcePriority)
-			hivemind.setGroupMax(prio.name,prio.hivemindLimit === -1 ? 50 : prio.hivemindLimit);
+			if(prio.hivemindLimit !== undefined)
+				hivemind.setGroupMax(prio.name,prio.hivemindLimit === -1 ? 50 : prio.hivemindLimit);
 		init();
 	};
 	return role;

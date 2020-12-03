@@ -6,7 +6,7 @@
  * var mod = require('settings');
  * mod.thing == 'a thing'; // true
  */
-
+const constants = require('constants');
 module.exports = {
     targetPopulation: {
         harvester: 5,
@@ -21,4 +21,7 @@ module.exports = {
         upgrader: false,
         repair_drone: false
     },
+    display: {
+        hivemind: [constants.GROUPS.SOURCE]
+    }
 };

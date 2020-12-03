@@ -6,17 +6,18 @@
 * var mod = require('harvester');
 * mod.thing == 'a thing'; // true
 */
+const GROUPS = require("constants").GROUPS;
 const sinkTable = [
     {
         name: "Door (Rampart) <10%",
-        hivemindLimit: 2,
+        hivemindLimit: 1,
         type: FIND_STRUCTURES,
         subType: [STRUCTURE_RAMPART],
         filter: (build, me) => (build.hits / build.hitsMax )< 0.1 && build.progressTotal === undefined,
         sorter: (build, me) => (Math.floor(build.hits / 1000) * 1000) + me.pos.getRangeTo(build)
-    },{
+    },
+    {
         name: "Repairable",
-        hivemindLimit: 5,
         type: FIND_STRUCTURES,
         filter: (build, me) => build.hits+100 < build.hitsMax && build.progressTotal === undefined,
         sorter: (build, me) => (Math.floor(build.hits / 1000) * 1000) + me.pos.getRangeTo(build)
@@ -24,10 +25,9 @@ const sinkTable = [
 ];
 const sourceTable = [
     {
-        name: "Storage",
-        hivemindLimit: -1,
+        name: GROUPS.STORAGE,
         type: FIND_STRUCTURES,
-        subTypes: [STRUCTURE_STORAGE,STRUCTURE_CONTAINER,STRUCTURE_POWER_BANK],
+        subTypes: [STRUCTURE_STORAGE,STRUCTURE_CONTAINER],
         filter: (build,me)=>build.store.energy>0,
         sorter: (build,me)=>me.pos.getRangeTo(build)
     }
