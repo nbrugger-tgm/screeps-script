@@ -9,19 +9,11 @@
 const replacementWork = true;
 const preference = "harvester";
 const Hivemind = require('hivemind');
-
+const settings = require('settings');
 
 module.exports = {
 		hivemind: new Hivemind(),
 		population: Object.keys(Game.creeps),
-		targetPopulation: {
-			harvester: 6,
-			builder: 2,
-			upgrader: 2,
-			//cargo: 0,
-			repair_drone: 1,
-			supplier: 1
-		},
 		roles: {
 			harvester: require("cool_harvester"),
 			builder: require("builder"),
@@ -29,11 +21,6 @@ module.exports = {
 			//cargo: require("cargo")(),
 			repair_drone: require("repair_drone"),
 			supplier: require("supplier")
-		},
-		reha:{
-			builder: false,
-			upgrader: false,
-			repair_drone: false
 		},
 		init: function() {
 			for (let key of Object.keys(this.roles)) {
@@ -79,7 +66,7 @@ module.exports = {
 					    screep.say("IDLE");
 					    break;
 					}
-					if(!this.reha[role])
+					if(!settings.reha[role])
 						try{
 							done = this.roles[role].live(screep);
 						}catch(e){
@@ -118,23 +105,23 @@ module.exports = {
 					populationCount[role] = 1;
 			}
 			if(this.checkPopulation(populationCount,preference))return;
-			for(let role in this.targetPopulation){
+			for(let role in settings.targetPopulation){
 			    //console.log(role + " Population ("+populationCount[role]+"/"+this.targetPopulation[role]+")");
 				if(this.checkPopulation(populationCount,role))
 					return;
 			}
 		},
 		checkPopulation: function(populationCount,role){
-			if((populationCount[role] == undefined && this.targetPopulation[role]>0) || populationCount[role]<this.targetPopulation[role]){
-				var spawn = this.bestSpawn();
+			if((populationCount[role] === undefined && settings.targetPopulation[role]>0) || populationCount[role]<settings.targetPopulation[role]){
+				let spawn = this.bestSpawn();
 				if(this.roles[role].minEnergy <= spawn.room.energyAvailable)
 					return this.spawnCreep(spawn.name,role,spawn.room.energyAvailable);
 			}
 			return false;
 		},
 		bestSpawn: function (){
-			var spawn = false;
-			for (var next of Object.keys(Game.spawns)) {
+			let spawn = false;
+			for (let next of Object.keys(Game.spawns)) {
 				next = Game.spawns[next];
 				if(!spawn)
 					spawn = next;
