@@ -20,8 +20,16 @@ const examplePrio = [
 		sorter: (build,me)=>me.pos.getRangeTo(build)
 	}
 ];
+const appliedFilter = {
+};
 
-module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDisdance = 1,sourceDisdance = 1,collectorFunction,sinkFunction,stopSinkingCondition,stopCollectingCondition,switchSinkCondition = (me,source)=>false,switchSourceCondition = (me,cource)=>false,log_minor = false,init = ()=>{}) => {
+function lastFilter(name){
+	let func = appliedFilter[name];
+	if(func === undefined)
+		return ()=>true;
+	return func;
+}
+module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDisdance = 1,sourceDisdance = 1,collectorFunction,sinkFunction,stopSinkingCondition,stopCollectingCondition,log_minor = false,init = ()=>{}) => {
 	let role = new Role(null, prefix, undefined, followers, minEngergy);
 	role.disdanceSorter = (s,me)=>me.pos.getRangeTo(s);
 	role.storeless = true;
@@ -59,6 +67,7 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 		}
 		targets = _.sortBy(targets, (s)=>prio.sorter(s,me));
 		me.memory[this.prefix].target = targets[0].id;
+		appliedFilter[me.name] = prio.filter;
 		this.lockSource(me,prio.name);
 		me.memory[this.prefix].state = foundState;
 		this.behave(me);
@@ -97,7 +106,7 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 					if (stopCollectingCondition(me, source)) {
 						this.findTarget(me);
 						return me.memory[prefix].idle;
-					} else if (switchSourceCondition(me, source)) {
+					} else if (!lastFilter(me.name)(source, me)) {
 						this.findSource(me);
 						return me.memory[prefix].idle;
 					}
@@ -105,7 +114,7 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 					if (stopSinkingCondition(me, source)) {
 						this.findSource(me);
 						return me.memory[prefix].idle;
-					} else if (switchSinkCondition(me, source)) {
+					} else if (!lastFilter(me.name)(source, me)) {
 						this.findTarget(me);
 						return me.memory[prefix].idle;
 					}
@@ -152,13 +161,13 @@ module.exports = (prefix,followers,minEngergy,sinkPriority,sourcePriority,sinkDi
 					if (state === COLLECTING) {
 						if (stopCollectingCondition(me, source)) {
 							this.findTarget(me);
-						} else if (switchSourceCondition(me, source)) {
+						} else if (!lastFilter(me.name)(source, me)) {
 							this.findSource(me);
 						}
 					} else {
 						if (stopSinkingCondition(me, source)) {
 							this.findSource(me);
-						} else if (switchSinkCondition(me, source)) {
+						} else if (!lastFilter(me.name)(source, me)) {
 							this.findTarget(me);
 						}
 					}
